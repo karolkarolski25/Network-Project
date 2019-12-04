@@ -9,30 +9,30 @@ Wariant 13 – model komunikacji 2 ↔ 1
 
 -Funkcje oprogramowania:
 
- -Klienta:
+   -Klienta:
    
-  -Nawiązanie połączenia z serwerem,
+      -Nawiązanie połączenia z serwerem,
     
-  -Uzyskanie identyfikatora sesji,
+      -Uzyskanie identyfikatora sesji,
     
-  -Przesłanie pojedynczej liczby L,
+      -Przesłanie pojedynczej liczby L,
     
-  -Przesyłanie wartości liczbowych, będących „odpowiedziami”:
+      -Przesyłanie wartości liczbowych, będących „odpowiedziami”:
     
-   -Klient ma odgadnąć liczbę wylosowaną przez serwer;
+         -Klient ma odgadnąć liczbę wylosowaną przez serwer;
     
-  -Zakończenie połączenia;
+      -Zakończenie połączenia;
 
- -Serwera:
+   -Serwera:
     
-  -Wygenerowanie identyfikatora sesji,
+      -Wygenerowanie identyfikatora sesji,
     
-  -Wylosowanie liczby tajnej z przedziału (L1 – L2; L1 + L2),
+      -Wylosowanie liczby tajnej z przedziału (L1 – L2; L1 + L2),
     
-  -Przesłanie przedziału, w którym zawiera się liczba do zgadnięcia,
+      -Przesłanie przedziału, w którym zawiera się liczba do zgadnięcia,
     
-  -Informowanie klientów, czy wartość została odgadnięta.
+      -Informowanie klientów, czy wartość została odgadnięta.
 
--Wymagania dodatkowe: 
+   -Wymagania dodatkowe: 
     
- -Identyfikator sesji powinien być przesyłany w każdym komunikacie 
+     -Identyfikator sesji powinien być przesyłany w każdym komunikacie 
