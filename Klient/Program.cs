@@ -8,12 +8,14 @@ namespace Klient
 {
     class Program
     {
+        // Pola operacji  
         private static string WYSLANIE_ID = "000010";
-        private static string L = "001000";
+        private static string LString = "001000";
         private static string ODP_SERWERA = "100000";
         private static string ODP_KLIENTA = "000100";
         private static string KONIEC_POLACZENIA = "100010";
 
+        // Pola odpowiedzi
         private static string ODP_POCZATEK = "001";
         private static string ODP_KONIEC = "010";
         private static string ODP_ZGADLES = "100";
@@ -28,7 +30,7 @@ namespace Klient
 
         private static int przedzialP, przedzialK, port = 13000;
         private static bool koniec = false, ipOK = true, portOK = true, error = false;
-        private static String ip = "192.168.1.74", idString;
+        private static String ip = "192.168.1.100", idString;
 
         static void Main(string[] args)
         {
@@ -66,6 +68,7 @@ namespace Klient
                 }
             } while (!portOK);
 
+            // Proba polaczenia
             try
             {
                 client = new TcpClient(ip, port);
@@ -86,16 +89,26 @@ namespace Klient
                 return;
             }
 
+            // Utworzenie pustego bufora danych
             string dane = string.Empty;
 
+            // Dopisanie pola operacji
             dane += KONIEC_POLACZENIA;
+
+            // Dopisanie pola odpowiedzi
             dane += "000";
+
+            // Dopisanie ID
             dane += idString;
+
+            // Dopisanie pustej liczby oraz dopelnienia
             dane += "000000000000000000000000";
 
+            // Zamiania bitow na bajty
             byte[] daneB = new byte[] { (byte)Convert.ToInt32(dane.Substring(0, 8), 2), (byte)Convert.ToInt32(dane.Substring(8, 8), 2),
                                         (byte)Convert.ToInt32(dane.Substring(16, 8), 2), (byte)Convert.ToInt32(dane.Substring(24), 2)};
 
+            // Proba wyslania pakietu z danymi
             try
             {
                 stream.Write(daneB, 0, 4);
@@ -112,6 +125,8 @@ namespace Klient
         static void OdbierzDane()
         {
             byte[] dane = new byte[4];
+
+            // Proba odebrania 4 bajtow
             try
             {
                 stream.Read(dane, 0, 4);
@@ -125,8 +140,10 @@ namespace Klient
                 return;
             }
 
+            // Zamiana bajtow na bity i polaczenie ich w jeden ciag
             string daneS = ZamienNaBinarny(dane[0]) + ZamienNaBinarny(dane[1]) + ZamienNaBinarny(dane[2]) + ZamienNaBinarny(dane[3]);
 
+            // Podzial ciagu na poszczegolne pola
             string OPString = daneS.Substring(0, 6);
             string ODPString = daneS.Substring(6, 3);
             string IDString = daneS.Substring(9, 3);
@@ -134,6 +151,7 @@ namespace Klient
 
             if (OPString == WYSLANIE_ID)
             {
+                // Zapisanie ID wyslanego przez serwer
                 idString = IDString;
 
                 WyslijLiczbe(false);
@@ -143,10 +161,12 @@ namespace Klient
             {
                 if (ODPString == ODP_POCZATEK)
                 {
+                    // Zapisanie poczatku przedzialu
                     przedzialP = Convert.ToInt16(liczbaString, 2);
                 }
                 else if (ODPString == ODP_KONIEC)
                 {
+                    // Zapisanie konca przedzialu
                     przedzialK = Convert.ToInt16(liczbaString, 2);
                     WyslijLiczbe(true);
                 }
@@ -162,6 +182,7 @@ namespace Klient
                 }
                 else if (ODPString == ODP_DRUGI_KLIENT_ZGADL)
                 {
+                    // Zamiana liczby na format dziesietny
                     int liczba = Convert.ToInt32(liczbaString, 2);
                     if (liczba > 32768)
                     {
@@ -193,6 +214,7 @@ namespace Klient
                         Console.Write($"Podaj Liczbę L{ktora} : ");
                     }
 
+                    // Proba wpisania liczby
                     try
                     {
                         liczba = Convert.ToInt32(Console.ReadLine());
@@ -217,35 +239,48 @@ namespace Klient
                     liczba16 = 0;
                 }
 
+                // Zamiana liczby na format binarny
                 string liczbaString = Convert.ToString(liczba16, 2);
 
                 StringBuilder sb = new StringBuilder();
+
+                // Dopasowanie liczby do 16 bitow
                 sb.Append('0', 16 - liczbaString.Length);
 
+                // Zapisanie liczby w formacie 16 bitowym oraz dopelnieniem
                 liczbaString = sb.ToString() + liczbaString + "0000";
 
+                // Utworzenie pustego bufora danych
                 string dane = string.Empty;
 
                 if (zgadywanie)
                 {
+                    // Dopisanie pola operacji
                     dane += ODP_KLIENTA;
 
+                    // Dopisanie pola odpowiedzi
                     dane += ODP_LICZBA;
                 }
                 else
                 {
-                    dane += L;
+                    // Dopisanie pola operacji
+                    dane += LString;
 
+                    // Dopisanie pola odpowiedzi
                     dane += "000";
                 }
 
+                // Dopisanie ID
                 dane += idString;
 
+                // Dopisanie liczby
                 dane += liczbaString;
 
+                // Zamiania bitow na bajty
                 byte[] daneB = new byte[] { (byte)Convert.ToInt32(dane.Substring(0, 8), 2), (byte)Convert.ToInt32(dane.Substring(8, 8), 2),
-                                        (byte)Convert.ToInt32(dane.Substring(16, 8), 2), (byte)Convert.ToInt32(dane.Substring(24), 2) };
+                                            (byte)Convert.ToInt32(dane.Substring(16, 8), 2), (byte)Convert.ToInt32(dane.Substring(24), 2) };
 
+                // Proba wyslania pakietu z danymi
                 try
                 {
                     stream.Write(daneB, 0, 4);
